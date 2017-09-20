@@ -5,7 +5,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class Odometer extends Thread {
 	// robot position
 	
-	public static final double WB = 15.1;
+	public static final double WB = 15.8;
 	public static final double WR = 2.1;
 	
 	private double x;
@@ -49,7 +49,9 @@ public class Odometer extends Thread {
 
 		while (true) {
 			updateStart = System.currentTimeMillis();
+			
 			// TODO put (some of) your odometer code here
+			
 			nowTachoL = leftMotor.getTachoCount(); // get tacho counts
 			nowTachoR = rightMotor.getTachoCount();
 			distL = 3.14159 * WR * (nowTachoL - lastTachoL) / 180; // compute wheel
