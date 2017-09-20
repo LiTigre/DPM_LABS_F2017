@@ -44,13 +44,11 @@ public class BangBangController implements UltrasonicController {
 			// bad value, do not set the distance var, however do increment the
 			// filter value
 			filterControl++;
-		}
-		else if (distance >= 100) {
+		} else if (distance >= 100) {
 			// We have repeated large values, so there must actually be nothing
 			// there: leave the distance alone
 			this.distance = distance;
-		}
-		else {
+		} else {
 			// distance went below 255: reset filter and leave
 			// distance alone.
 			filterControl = 0;
@@ -59,12 +57,10 @@ public class BangBangController implements UltrasonicController {
 
 		if (distance >= 45 && tightTurnControl < TURN_OUT) {
 			tightTurnControl++;
-		}
-		else if (distance >= 45) {
+		} else if (distance >= 45) {
 			// this.distance = distance;
 			this.tightTurn = true;
-		}
-		else {
+		} else {
 			tightTurnControl = 0;
 			tightTurn = false;
 			// this.distance = distance;
@@ -75,7 +71,7 @@ public class BangBangController implements UltrasonicController {
 		 * CONSIDER LEFT WHEEL AS INNER WHEEL, CLOSER TO THE WALL
 		 **/
 
-		// Let's create an error integer variable 
+		// Let's create an error integer variable
 		int errorCalculated = bandCenter - readUSDistance();
 		// Compare it to the given error threshold
 		// If it is less than the threshold, move forward
@@ -92,14 +88,13 @@ public class BangBangController implements UltrasonicController {
 		// Cannot speed up other wheel as only two speeds are given
 
 		else if (errorCalculated < 0) {
-			
+
 			if (tightTurn) {
 				WallFollowingLab.leftMotor.setSpeed(motorLow);
 				WallFollowingLab.rightMotor.setSpeed(motorLow - 30);
 				WallFollowingLab.leftMotor.backward();
 				WallFollowingLab.rightMotor.forward();
-			}
-			else {
+			} else {
 				WallFollowingLab.leftMotor.setSpeed(motorLow);
 				WallFollowingLab.rightMotor.setSpeed(motorHigh + 30);
 				WallFollowingLab.leftMotor.forward();
@@ -109,7 +104,7 @@ public class BangBangController implements UltrasonicController {
 
 		// If the error is positive, it is too close, slow outer wheel
 		else if (errorCalculated > 0) {
-			if (readUSDistance() < 18) {
+			if (readUSDistance() < 19) {
 				WallFollowingLab.leftMotor.setSpeed((int) (motorLow + 20));
 				WallFollowingLab.rightMotor.setSpeed((int) (1.8 * motorHigh));
 				WallFollowingLab.leftMotor.backward();
@@ -117,7 +112,7 @@ public class BangBangController implements UltrasonicController {
 			}
 
 			else {
-				WallFollowingLab.leftMotor.setSpeed(motorHigh);
+				WallFollowingLab.leftMotor.setSpeed(motorHigh + 20);
 				WallFollowingLab.rightMotor.setSpeed(motorLow);
 				WallFollowingLab.leftMotor.forward();
 				WallFollowingLab.rightMotor.forward();

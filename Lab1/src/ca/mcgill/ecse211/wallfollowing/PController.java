@@ -14,7 +14,6 @@ public class PController implements UltrasonicController {
 	private int distance;
 	private int filterControl;
 
-
 	public PController(int bandCenter, int bandwidth) {
 		this.bandCenter = bandCenter;
 		this.bandWidth = bandwidth;
@@ -39,20 +38,17 @@ public class PController implements UltrasonicController {
 			// bad value, do not set the distance var, however do increment the
 			// filter value
 			filterControl++;
-		}
-		else if (distance >= 255) {
+		} else if (distance >= 255) {
 			// We have repeated large values, so there must actually be nothing
 			// there: leave the distance alone
 			this.distance = distance;
-		}
-		else {
+		} else {
 			// distance went below 255: reset filter and leave
 			// distance alone.
 			filterControl = 0;
 			this.distance = distance;
 		}
 
-		
 		// TODO: process a movement based on the us distance passed in (P style)
 
 		/**
@@ -69,8 +65,7 @@ public class PController implements UltrasonicController {
 		// Compare it to the given error threshold
 		// If it is less than the threshold, move forward
 		int correction = (int) (propConstant * (double) (Math.abs(errorCalculated)));
-		//double ratio;
-		
+		// double ratio;
 
 		// if error is insignificant
 		if (Math.abs(errorCalculated) <= bandWidth) {
@@ -82,45 +77,37 @@ public class PController implements UltrasonicController {
 
 		// too far
 		else if (errorCalculated < 0) {
-		/*	if (tightTurn) {
-				WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED - correction );
-				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED + correction); // Speed outer wheel
-				WallFollowingLab.leftMotor.forward();
-				WallFollowingLab.rightMotor.forward();
-			}*/
-			// {
-				correction = (int) (propConstant * (double) (Math.abs(errorCalculated)));
-				if (correction >= MAXCORRECTION) {
-					correction = MAXCORRECTION;
-				}
-				WallFollowingLab.leftMotor.setSpeed( (MOTOR_SPEED -  correction));
-				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED + correction); // Speed
-																		// outer
-																		// wheel
-				WallFollowingLab.leftMotor.forward();
-				WallFollowingLab.rightMotor.forward();
-			//}
+
+			correction = (int) (propConstant * (double) (Math.abs(errorCalculated)));
+			if (correction >= MAXCORRECTION) {
+				correction = MAXCORRECTION;
+			}
+			WallFollowingLab.leftMotor.setSpeed((MOTOR_SPEED - correction));
+			WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED + correction); // Speed
+			// outer
+			// wheel
+			WallFollowingLab.leftMotor.forward();
+			WallFollowingLab.rightMotor.forward();
+			// }
 		}
 
 		// too close
 		else if (errorCalculated > 0) {
-			/*if (readUSDistance() < 12) {
-				WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED-correction);
-				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED+ (correction));
+			if (distance < 13) {
+				WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED - (correction));
+				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED + correction);
 				WallFollowingLab.leftMotor.backward();
-				WallFollowingLab.rightMotor.backward();	
-			} */
-			
-			//else {
-				//correction = (int) (propConstant * (double) (Math.abs(errorCalculated)));
+				WallFollowingLab.rightMotor.backward();
+
+			} else {
 				if (correction >= MAXCORRECTION) {
 					correction = MAXCORRECTION;
 				}
 				WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED + (correction));
-				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED - correction); 
+				WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED - correction);
 				WallFollowingLab.leftMotor.forward();
 				WallFollowingLab.rightMotor.forward();
-			//}
+			}
 		}
 
 	}
