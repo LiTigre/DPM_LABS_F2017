@@ -4,28 +4,27 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer extends Thread {
 	// robot position
-	
-	public static final double WB = 15.8;
-	public static final double WR = 2.1;
-	
-	private double x;
-	private double y;
-	private double theta;
-	private int leftMotorTachoCount;
-	private int rightMotorTachoCount;
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
-	
-	public static int lastTachoL;
-	public static int lastTachoR;
-	public static int nowTachoL;
-	public static int nowTachoR;
-	
-	
+
 	private static final long ODOMETER_PERIOD = 25; /*
 													 * odometer update period,
 													 * in ms
 													 */
+	public static final double WHEEL_BASE = 15.5;
+	public static final double WHEEL_RADIUS = 2.1;	//TODO: check the actual width of our robot
+	
+	private double x;
+	private double y;
+	private double theta;
+	private double distL, distR, deltaD, deltaT, dX, dY;
+	private int leftMotorTachoCount;
+	private int rightMotorTachoCount;
+	private EV3LargeRegulatedMotor leftMotor;
+	private EV3LargeRegulatedMotor rightMotor;
+
+	public static int lastTachoL;
+	public static int lastTachoR;
+	public static int nowTachoL;
+	public static int nowTachoR;
 
 	private Object lock; /* lock object for mutual exclusion */
 
@@ -36,32 +35,39 @@ public class Odometer extends Thread {
 		this.x = 0.0;
 		this.y = 0.0;
 		this.theta = 0.0;
-		this.leftMotorTachoCount = 0;
-		this.rightMotorTachoCount = 0;
+//		this.leftMotorTachoCount = 0;
+//		this.rightMotorTachoCount = 0;
+		lastTachoL = 0;
+		lastTachoR = 0;
+		nowTachoL = 0;
+		nowTachoR = 0;
 		lock = new Object();
 	}
 
 	// run method (required for Thread)
 	public void run() {
 		long updateStart, updateEnd;
-		double distL, distR, deltaD, deltaT, dX, dY;
-
+		
 
 		while (true) {
 			updateStart = System.currentTimeMillis();
-			
+
 			// TODO put (some of) your odometer code here
-			
+
 			nowTachoL = leftMotor.getTachoCount(); // get tacho counts
 			nowTachoR = rightMotor.getTachoCount();
-			distL = 3.14159 * WR * (nowTachoL - lastTachoL) / 180; // compute wheel
-			distR = 3.14159 * WR * (nowTachoR - lastTachoR) / 180;
-			// //
+			
+			/** tacho returns the rotation its done in degrees **/
+			
+			//2*pi*R
+			distL = 3.14159 * WHEEL_RADIUS * (nowTachoL - lastTachoL) / 180;	//hence why we devide by 360 to get number of rotations
+			distR = 3.14159 * WHEEL_RADIUS * (nowTachoR - lastTachoR) / 180;
+			
 			// displacements
 			lastTachoL = nowTachoL;
 			lastTachoR = nowTachoR;
-			deltaD = 0.5 * (distL + distR);
-			deltaT = (distL - distR) / WB;
+			deltaD = 0.5 * (distL + distR);	//averages the distance the robot has done
+			deltaT = (distL - distR) / WHEEL_BASE ;	
 
 			synchronized (lock) {
 				/**
@@ -70,9 +76,11 @@ public class Odometer extends Thread {
 				 * not perform complex math
 				 * 
 				 */
+				
 				theta += deltaT;
 				dX = deltaD * Math.sin(theta);
-				dY = deltaD * Math.cos(theta); // compute Y component of displacement
+				dY = deltaD * Math.cos(theta); // compute Y component of
+												// displacement
 				x = x + dX; // update estimates of X
 							// and Y position
 				y = y + dY;
@@ -94,13 +102,18 @@ public class Odometer extends Thread {
 
 	public void getPosition(double[] position, boolean[] update) {
 		// ensure that the values don't change while the odometer is running
+		double angle = theta * (180/Math.PI);
 		synchronized (lock) {
 			if (update[0])
 				position[0] = x;
 			if (update[1])
 				position[1] = y;
 			if (update[2])
-				position[2] = theta;
+				//TODO: make an if statement for if its over 360 degrees
+				if (angle > 360){
+					angle = angle-360;
+				}
+				position[2] = angle;
 		}
 	}
 
