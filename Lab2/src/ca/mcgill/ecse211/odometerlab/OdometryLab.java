@@ -16,7 +16,7 @@ public class OdometryLab {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 15.5;	//width
+	public static final double TRACK = 16.7;	//TODO: check the actual width of our robot
 
 	public static void main(String[] args) {
 		int buttonChoice;
@@ -25,6 +25,7 @@ public class OdometryLab {
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
+		odometer.odoCorrection = odometryCorrection;
 
 		do {
 			// clear the display

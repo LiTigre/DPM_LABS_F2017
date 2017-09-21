@@ -9,8 +9,9 @@ public class Odometer extends Thread {
 													 * odometer update period,
 													 * in ms
 													 */
-	public static final double WHEEL_BASE = 15.5;
+	public static final double WHEEL_BASE = 16.7;
 	public static final double WHEEL_RADIUS = 2.1;	//TODO: check the actual width of our robot
+	public OdometryCorrection odoCorrection;
 	
 	private double x;
 	private double y;
@@ -41,6 +42,9 @@ public class Odometer extends Thread {
 		lastTachoR = 0;
 		nowTachoL = 0;
 		nowTachoR = 0;
+		
+		//this.odoCorrection = new OdometryCorrection(this);
+		
 		lock = new Object();
 	}
 

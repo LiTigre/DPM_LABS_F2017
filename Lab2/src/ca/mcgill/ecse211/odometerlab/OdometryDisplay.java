@@ -32,6 +32,9 @@ public class OdometryDisplay extends Thread {
       t.drawString("X:              ", 0, 0);
       t.drawString("Y:              ", 0, 1);
       t.drawString("T:              ", 0, 2);
+      t.drawString("light:      ", 0, 3);
+      t.drawString("XCounter:", 0, 4);
+      t.drawString("YCounter:", 0, 5);
 
       // get the odometry information
       odometer.getPosition(position, new boolean[] {true, true, true});
@@ -41,6 +44,11 @@ public class OdometryDisplay extends Thread {
         t.drawString(formattedDoubleToString(position[i], 2), 3, i);
       }
 
+      t.drawString(Integer.toString(odometer.odoCorrection.colorID), 8, 3);
+      t.drawString(Integer.toString(odometer.odoCorrection.xCounter), 10, 4);
+      t.drawString(Integer.toString(odometer.odoCorrection.yCounter), 10, 5);
+
+      
       // throttle the OdometryDisplay
       displayEnd = System.currentTimeMillis();
       if (displayEnd - displayStart < DISPLAY_PERIOD) {
