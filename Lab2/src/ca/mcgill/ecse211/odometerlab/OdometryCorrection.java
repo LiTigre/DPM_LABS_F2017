@@ -9,6 +9,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 
 public class OdometryCorrection extends Thread {
 	private static final long CORRECTION_PERIOD = 10;
+	private static final double TILE_BASE = 30.48;
 	private Odometer odometer;
 	public EV3ColorSensor colorSensor;
 	public int colorID;
@@ -42,17 +43,19 @@ public class OdometryCorrection extends Thread {
 			colorID = colorSensor.getColorID();
 
 			if (colorID > 10) {
+
 				theta = odometer.getTheta();
+
 				// initial straight line going up the Y axis
 				if (theta < (Math.PI / 4) || theta > (Math.PI * 7 / 4)) {
 					if (firstY == false) { // crossing the line for the first time
 						yCounter = 0;
-						odometer.setY(yCounter * 30.48);
+						odometer.setY(yCounter * TILE_BASE);
 						firstY = true;
 					}
 					else {
 						yCounter++;
-						odometer.setY(yCounter * 30.48);
+						odometer.setY(yCounter * TILE_BASE);
 					}
 				}
 
@@ -60,24 +63,24 @@ public class OdometryCorrection extends Thread {
 				else if (theta > (Math.PI / 4) && theta < (Math.PI * 3 / 4)) {
 					if (firstX == false) { // crossing the line for the first time
 						xCounter = 0;
-						odometer.setX(xCounter * 30.48);
+						odometer.setX(xCounter * TILE_BASE);
 						firstX = true;
 					}
 					else {
 						xCounter++;
-						odometer.setX(xCounter * 30.48);
+						odometer.setX(xCounter * TILE_BASE);
 					}
 				}
 
 				// down the y axis
 				else if (theta > (Math.PI * 3 / 4) && theta < (Math.PI * 5 / 4)) {
-					odometer.setY(yCounter * 30.48);
+					odometer.setY(yCounter * TILE_BASE);
 					yCounter--;
 				}
 
-				// back towards the starting point
+				// back towards the starting point, aka down the X axis
 				else if (theta > (Math.PI * 5 / 4) && theta < (Math.PI * 7 / 4)) {
-					odometer.setX(xCounter * 30.48);
+					odometer.setX(xCounter * TILE_BASE);
 					xCounter--;
 				}
 				Sound.beep();

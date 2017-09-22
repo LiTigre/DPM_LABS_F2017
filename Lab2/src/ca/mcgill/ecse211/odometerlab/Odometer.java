@@ -9,7 +9,7 @@ public class Odometer extends Thread {
 													 * odometer update period,
 													 * in ms
 													 */
-	public static final double WHEEL_BASE = 16;	//TODO: check the actual width of our robot
+	public static final double WHEEL_BASE = 16;	//this works pretty well rn
 	public static final double WHEEL_RADIUS = 2.1;	
 	public OdometryCorrection odoCorrection;
 	
@@ -36,14 +36,10 @@ public class Odometer extends Thread {
 		this.x = 0.0;
 		this.y = 0.0;
 		this.theta = 0.0;
-//		this.leftMotorTachoCount = 0;
-//		this.rightMotorTachoCount = 0;
 		lastTachoL = 0;
 		lastTachoR = 0;
 		nowTachoL = 0;
 		nowTachoR = 0;
-		
-		//this.odoCorrection = new OdometryCorrection(this);
 		
 		lock = new Object();
 	}
@@ -104,18 +100,18 @@ public class Odometer extends Thread {
 
 	public void getPosition(double[] position, boolean[] update) {
 		// ensure that the values don't change while the odometer is running
-		double angle = theta * (180/Math.PI);
+		double angle = theta * (180/Math.PI);	//convert theta(radians) to degrees
 		synchronized (lock) {
 			if (update[0])
 				position[0] = x;
 			if (update[1])
 				position[1] = y;
-			if (update[2])
-				//TODO: make an if statement for if its over 360 degrees
+			if (update[2]) {
 				if (angle > 360){
-					angle = angle-360;
+					angle = angle - 360;
 				}
 				position[2] = angle;
+			}
 		}
 	}
 
