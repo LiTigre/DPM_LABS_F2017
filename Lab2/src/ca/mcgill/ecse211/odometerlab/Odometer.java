@@ -9,8 +9,8 @@ public class Odometer extends Thread {
 													 * odometer update period,
 													 * in ms
 													 */
-	public static final double WHEEL_BASE = 16.7;
-	public static final double WHEEL_RADIUS = 2.1;	//TODO: check the actual width of our robot
+	public static final double WHEEL_BASE = 16;	//TODO: check the actual width of our robot
+	public static final double WHEEL_RADIUS = 2.1;	
 	public OdometryCorrection odoCorrection;
 	
 	private double x;
@@ -82,11 +82,9 @@ public class Odometer extends Thread {
 				 */
 				
 				theta += deltaT;
-				dX = deltaD * Math.sin(theta);
-				dY = deltaD * Math.cos(theta); // compute Y component of
-												// displacement
-				x = x + dX; // update estimates of X
-							// and Y position
+				dX = deltaD * Math.sin(theta);	// compute X componenet of displacement
+				dY = deltaD * Math.cos(theta);	// compute Y component of displacement
+				x = x + dX; // update estimates of X and Y position
 				y = y + dY;
 			}
 

@@ -11,12 +11,12 @@ import lejos.hardware.port.Port;
 
 public class OdometryLab {
 
-	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 
-	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
+	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 16.7;	//TODO: check the actual width of our robot
+	public static final double TRACK = 16;	//TODO: check the actual width of our robot
 
 	public static void main(String[] args) {
 		int buttonChoice;
@@ -68,8 +68,9 @@ public class OdometryLab {
 			odometer.start();
 			odometryDisplay.start();
 
-			if (buttonChoice != Button.ID_RIGHT) {
+			if (buttonChoice == Button.ID_RIGHT) {
 				odometryCorrection.start();
+				
 			}
 
 			// spawn a new Thread to avoid SquareDriver.drive() from blocking
