@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.odometerlab;
+package ca.mcgill.ecse211.lab2;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
@@ -9,7 +9,7 @@ public class Odometer extends Thread {
 													 * odometer update period,
 													 * in ms
 													 */
-	public static final double WHEEL_BASE = 16;	//this works pretty well rn
+	public static final double WHEEL_BASE = 15.55;	//this works pretty well rn
 	public static final double WHEEL_RADIUS = 2.1;	
 	public OdometryCorrection odoCorrection;
 	
@@ -109,6 +109,9 @@ public class Odometer extends Thread {
 			if (update[2]) {
 				if (angle > 360){
 					angle = angle - 360;
+				}
+				if (angle < 0){
+					angle = angle + 360;
 				}
 				position[2] = angle;
 			}

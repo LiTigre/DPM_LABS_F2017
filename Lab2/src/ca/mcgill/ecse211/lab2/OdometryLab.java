@@ -1,6 +1,6 @@
 // Lab2.java
 
-package ca.mcgill.ecse211.odometerlab;
+package ca.mcgill.ecse211.lab2;
 
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
@@ -16,7 +16,7 @@ public class OdometryLab {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 16;	//TODO: check the actual width of our robot
+	public static final double TRACK = 15.55;	//TODO: check the actual width of our robot
 
 	public static void main(String[] args) {
 		int buttonChoice;

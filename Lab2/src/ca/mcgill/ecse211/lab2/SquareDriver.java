@@ -1,7 +1,7 @@
 /*
  * SquareDriver.java
  */
-package ca.mcgill.ecse211.odometerlab;
+package ca.mcgill.ecse211.lab2;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
