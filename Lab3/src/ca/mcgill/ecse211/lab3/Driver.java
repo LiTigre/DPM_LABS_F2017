@@ -8,19 +8,16 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class Driver extends Thread {
 	private static final int FORWARD_SPEED = 250;
 	private static final int ROTATE_SPEED = 150;
-	private static final double WHEEL_RADIUS = 2.1;
+	private static final double WHEEL_RADIUS = 2.15;
 	private static final double TILE_BASE = 30.48;
 	private static final double ERROR = 3;
 
-//	private double previousX;
-//	private double previousY;
 
 	public EV3LargeRegulatedMotor leftMotor;
 	public EV3LargeRegulatedMotor rightMotor;
 	
 	private Odometer odometer;
 	private double width;
-//	public boolean driving;
 
 	public Driver(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, double leftRadius,
 			double rightRadius, double width, Odometer odometer) {
@@ -28,15 +25,12 @@ public class Driver extends Thread {
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
 		this.width = width;
-//		previousX = 0;
-//		previousY = 0;
-//		driving = false;
 	}
 
 	/**
 	 * Method to make the robot drive a certain distance FORWARD(only)
 	 */
-	private void drive(double travelDist) {
+	public void drive(double travelDist) {
 		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
 			motor.stop();
 			motor.setAcceleration(3000);
@@ -66,8 +60,6 @@ public class Driver extends Thread {
 		turnTo(absoluteAngle(travelX, travelY));
 		drive(travelTotal);
 		
-//		previousX = x;
-//		previousY = y;
 	}
 
 	
@@ -103,32 +95,29 @@ public class Driver extends Thread {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
+	
 	/**
 	 * given an absolute theta, turn to that angle
 	 */
 	public void turnTo(double theta) {		//ABSOLUTE angle
 		double currentTheta = odometer.getTheta(); //theta of the robot in DEGREES
 		double turnTheta = distance(currentTheta, theta);
-		boolean crossover = false;
-		
-//		turnTheta = distance(currentTheta, theta);
-		
-		
+		boolean crossover = false;		
 		boolean clockwise = false;
 		
 		double range = currentTheta + 180;
 		if (range > 360) {
 			range = range - 360;
-			crossover = true;
+			crossover = true;	//range passes over 0 degrees
 		}
 		
-		if (crossover) {
-			if (theta > currentTheta || theta < range) {
+		if (crossover) {	//crossover -> currentTheta between 180 and 360
+			if (theta > currentTheta || theta < range) {	//in the 180 degrees counterclockwise
 				clockwise = true;
 			}
 		}
-		else {
-			if (theta < range && theta > currentTheta) {
+		else {	//currentTheta between 0 and 180
+			if (theta < range && theta > currentTheta) {	//in the 180 degrees clockwise
 				clockwise = true;
 			}
 		}
@@ -144,90 +133,6 @@ public class Driver extends Thread {
 			leftMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), true);
 			rightMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), false);
 		}
-		
-		
-		
-		
-	/**
-	 * 4 cases:
-	 * 
-	 */
-//		
-//		double smallDegree;
-//		double bigDegree;
-//		
-//		if (pTheta > theta) {
-//			bigDegree = pTheta;
-//			smallDegree = theta;
-//		}
-//		else {
-//			bigDegree = theta;
-//			smallDegree = pTheta;
-//		}
-//		
-//		
-		
-//		if (turnTheta > 360){
-//			turnTheta = turnTheta - 360;
-//		}
-//		if (turnTheta < 0){
-//			turnTheta = turnTheta + 360;
-//		}
-//		4532453
-		
-		
-		
-		
-		
-//		
-//		double range = currentTheta + 180;
-//		if (range > 360) {
-//			range = range - 360;
-//			crossover = true;
-//		}
-//		
-//		
-//		leftMotor.setSpeed(ROTATE_SPEED);
-//		rightMotor.setSpeed(ROTATE_SPEED);
-//		
-//		if (crossover){
-//			if (theta > currentTheta) {	//clockwise
-//				turnTheta = theta - currentTheta;
-//				leftMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-//				rightMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), false);
-//			}
-//			else if (theta < range) {	//clockwise
-//				turnTheta = (360 - currentTheta) + theta;
-//				leftMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-//				rightMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), false);
-//			}
-//			else {		//counterclockwise
-//				turnTheta = currentTheta - theta;
-//				leftMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-//				rightMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), false);
-//			}
-//		}
-//		
-//		else {		//currentTheta is from 0 to 180
-//			if (theta > currentTheta || theta < range) {	//clockwise
-//				turnTheta = theta - currentTheta;
-//				leftMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-//				rightMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), false);
-//			}
-//			else {					//counterclockwise
-//				if (theta > currentTheta) {	//crossover
-//					turnTheta = (360 - theta) + currentTheta;
-//				}
-//				else {
-//					turnTheta = currentTheta - theta;
-//				}
-//				leftMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-//				rightMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), false);
-//			}
-//		}
-
-		
-		
 		
 	}
 	
