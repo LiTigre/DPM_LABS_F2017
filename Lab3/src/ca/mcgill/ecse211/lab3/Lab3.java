@@ -75,11 +75,26 @@ public class Lab3 {
 			}
 			driver.start();
 			
-			driver.travelTo(0, 2);
-			driver.travelTo(1, 1);
-			driver.travelTo(2, 2);
-			driver.travelTo(2, 1);
+			//path 2
+//			driver.travelTo(1, 1);
+//			driver.travelTo(0, 2);
+//			driver.travelTo(2, 2);
+//			driver.travelTo(2, 1);
+//			driver.travelTo(1, 0);
+			
+			//path 3
+//			driver.travelTo(1, 0);
+//			driver.travelTo(2, 1);
+//			driver.travelTo(2, 2);
+//			driver.travelTo(0, 2);
+//			driver.travelTo(1, 1);
+			
+			//path 4
+			driver.travelTo(0, 1);
+			driver.travelTo(1, 2);
 			driver.travelTo(1, 0);
+			driver.travelTo(2, 1);
+			driver.travelTo(2, 2);
 
 
 			// spawn a new Thread to avoid SquareDriver.drive() from blocking
