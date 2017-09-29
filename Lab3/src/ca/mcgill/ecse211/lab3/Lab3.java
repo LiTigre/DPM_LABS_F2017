@@ -32,8 +32,6 @@ public class Lab3 {
 		final TextLCD t = LocalEV3.get().getTextLCD();
 		final Odometer odometer = new Odometer(leftMotor, rightMotor);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
-		odometer.odoCorrection = odometryCorrection;
 		
 		
 		

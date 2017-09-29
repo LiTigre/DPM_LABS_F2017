@@ -11,7 +11,6 @@ public class Odometer extends Thread {
 													 */
 	public static final double WHEEL_BASE = 15.55;	//this works pretty well rn
 	public static final double WHEEL_RADIUS = 2.1;	
-	public OdometryCorrection odoCorrection;
 	
 	private double x;
 	private double y;
