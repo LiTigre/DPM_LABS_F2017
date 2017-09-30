@@ -10,8 +10,17 @@ public class OdometryDisplay extends Thread {
 	private static final long DISPLAY_PERIOD = 250;
 	private Odometer odometer;
 	private TextLCD t;
+	private NavigationObstacles driver;
+	private boolean obstacle;
 
 	// constructor
+	public OdometryDisplay(Odometer odometer, TextLCD t, NavigationObstacles driver) {
+		this.odometer = odometer;
+		this.t = t;
+		this.driver = driver;
+		this.obstacle = true;
+	}
+
 	public OdometryDisplay(Odometer odometer, TextLCD t) {
 		this.odometer = odometer;
 		this.t = t;
@@ -32,9 +41,17 @@ public class OdometryDisplay extends Thread {
 			t.drawString("X:              ", 0, 0);
 			t.drawString("Y:              ", 0, 1);
 			t.drawString("T:              ", 0, 2);
-//			 t.drawString("light: ", 0, 3);
-//			 t.drawString("XCounter:", 0, 4);
-//			 t.drawString("YCounter:", 0, 5);
+			t.drawString("distance: ", 0, 3);
+
+			if (obstacle) {
+				t.drawString("Mode: ", 0, 4);
+				t.drawString("targetX: ", 0, 5);
+				t.drawString("targetY: ", 0, 6);
+			}
+
+			// t.drawString("light: ", 0, 3);
+			// t.drawString("XCounter:", 0, 4);
+			// t.drawString("YCounter:", 0, 5);
 
 			// get the odometry information
 			odometer.getPosition(position, new boolean[] { true, true, true });
@@ -43,11 +60,18 @@ public class OdometryDisplay extends Thread {
 			for (int i = 0; i < 3; i++) {
 				t.drawString(formattedDoubleToString(position[i], 2), 3, i);
 			}
-			
+
+			if (obstacle) {
+				t.drawString(Double.toString(driver.distance), 12, 3);
+				t.drawString(driver.getMode(), 8, 4);
+				t.drawString(Double.toString(driver.targetX), 10, 5);
+				t.drawString(Double.toString(driver.targetY), 10, 6);
+			}
+
 			/** only keep for testing **/
-//			 t.drawString(Integer.toString(odometer.odoCorrection.getcolorID()), 8, 3);
-//			 t.drawString(Integer.toString(odometer.odoCorrection.getxCounter()), 10, 4);
-//			 t.drawString(Integer.toString(odometer.odoCorrection.getyCounter()), 10, 5);
+			// t.drawString(Integer.toString(odometer.odoCorrection.getcolorID()), 8, 3);
+			// t.drawString(Integer.toString(odometer.odoCorrection.getxCounter()), 10, 4);
+			// t.drawString(Integer.toString(odometer.odoCorrection.getyCounter()), 10, 5);
 
 			// throttle the OdometryDisplay
 			displayEnd = System.currentTimeMillis();

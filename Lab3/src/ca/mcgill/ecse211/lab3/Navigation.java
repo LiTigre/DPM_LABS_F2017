@@ -1,14 +1,12 @@
-/*
- * SquareDriver.java
- */
 package ca.mcgill.ecse211.lab3;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
-public class Driver extends Thread {
+public class Navigation extends Thread {
 	private static final int FORWARD_SPEED = 250;
 	private static final int ROTATE_SPEED = 150;
-	private static final double WHEEL_RADIUS = 2.15;
+	private double WHEEL_RADIUS;
+	private double TRACK;
 	private static final double TILE_BASE = 30.48;
 	private static final double ERROR = 3;
 
@@ -17,14 +15,16 @@ public class Driver extends Thread {
 	public EV3LargeRegulatedMotor rightMotor;
 	
 	private Odometer odometer;
-	private double width;
+	private boolean navigating;
 
-	public Driver(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, double leftRadius,
-			double rightRadius, double width, Odometer odometer) {
+	
+	public Navigation(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
-		this.width = width;
+		this.TRACK = Lab3.TRACK;
+		this.WHEEL_RADIUS = Lab3.WHEEL_RADIUS;
+		this.navigating = false;
 	}
 
 	/**
@@ -49,17 +49,19 @@ public class Driver extends Thread {
 	 * It will take as input coordinants, and convert them to actual distances (1*TILE_BASE)
 	 */
 	public void travelTo(double x, double y) {
+		navigating = true;
+
 		double px = odometer.getX(); // previous x
 		double py = odometer.getY(); // previous y
-		// double pthetha = odometer.getTheta(); //previous theta IN RADIANS
 
 		double travelX = x*TILE_BASE - px;
 		double travelY = y*TILE_BASE - py;
-		double travelTotal = Math.sqrt(Math.pow(travelX, 2) + Math.pow(travelY,  2));
+		double travelTotal = Math.sqrt(Math.pow(travelX, 2) + Math.pow(travelY,  2));	//pythagore
 		
 		turnTo(absoluteAngle(travelX, travelY));
 		drive(travelTotal);
 		
+		navigating = false;
 	}
 
 	
@@ -126,16 +128,19 @@ public class Driver extends Thread {
 		rightMotor.setSpeed(ROTATE_SPEED);
 		
 		if (clockwise) {
-			leftMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-			rightMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), false);
+			leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
+			rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
 		}
 		else {
-			leftMotor.rotate(-convertAngle(WHEEL_RADIUS, width, turnTheta), true);
-			rightMotor.rotate(convertAngle(WHEEL_RADIUS, width, turnTheta), false);
+			leftMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
+			rightMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
 		}
 		
 	}
 	
+	public boolean isNavigating(){
+		return navigating;
+	}
 	
 	/**
      * Length (angular) of a shortest way between two angles.
