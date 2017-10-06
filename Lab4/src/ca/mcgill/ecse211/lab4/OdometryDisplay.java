@@ -10,12 +10,10 @@ public class OdometryDisplay extends Thread {
 	private static final long DISPLAY_PERIOD = 250;
 	private Odometer odometer;
 	private TextLCD t;
-	private Navigation driver;
 
 	// constructor
-	public OdometryDisplay(Odometer odometer, TextLCD t, Navigation driver) {
+	public OdometryDisplay(Odometer odometer, TextLCD t) {
 		this.odometer = odometer;
-		this.driver = driver;
 		this.t = t;
 	}
 
@@ -34,11 +32,7 @@ public class OdometryDisplay extends Thread {
 			t.drawString("X:              ", 0, 0);
 			t.drawString("Y:              ", 0, 1);
 			t.drawString("T:              ", 0, 2);
-//			t.drawString("mode: ", 0, 3);
-			// t.drawString("light: ", 0, 3);
-			t.drawString("targetX:", 0, 4);
-			t.drawString("targetY:", 0, 5);
-			t.drawString("distanceUS:", 0, 6);
+			
 
 			// get the odometry information
 			odometer.getPosition(position, new boolean[] { true, true, true });
@@ -47,21 +41,7 @@ public class OdometryDisplay extends Thread {
 			for (int i = 0; i < 3; i++) {
 				t.drawString(formattedDoubleToString(position[i], 2), 3, i);
 			}
-
-//			if (driver.getMode() != null) {
-//				t.drawString(driver.getMode(), 6, 3);
-//			}
-
-			/** only keep for testing **/
-			// t.drawString(Integer.toString(odometer.odoCorrection.getcolorID()), 8, 3);
-			if (this.driver != null) {
-				t.drawString(formattedDoubleToString(driver.targetX, 2), 8, 4);
-				t.drawString(formattedDoubleToString(driver.targetY, 2), 8, 5);
-				t.drawString(formattedDoubleToString(driver.readUSDistance(), 3), 11, 6);
-//				if (driver.getMode() != null) {
-//					t.drawString(driver.getMode(), 6, 3);
-//				}
-			}
+			
 			// throttle the OdometryDisplay
 			displayEnd = System.currentTimeMillis();
 			if (displayEnd - displayStart < DISPLAY_PERIOD) {

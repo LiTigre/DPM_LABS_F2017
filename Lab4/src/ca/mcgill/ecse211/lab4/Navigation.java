@@ -7,12 +7,12 @@ import lejos.hardware.Button;
 public class Navigation extends Thread implements UltrasonicController {
 
 	// global variables for the code
-	private static int FORWARD_SPEED = Lab3.FORWARD_SPEED;
-	private static int ROTATE_SPEED = Lab3.ROTATE_SPEED;
-	private static double WHEEL_RADIUS = Lab3.WHEEL_RADIUS;
-	private static double TILE_BASE = Lab3.TILE_BASE;
-	private static double TRACK = Lab3.TRACK;
-	private static double ERROR = Lab3.ERROR;
+	private static int FORWARD_SPEED = Lab4.FORWARD_SPEED;
+	private static int ROTATE_SPEED = Lab4.ROTATE_SPEED;
+	private static double WHEEL_RADIUS = Lab4.WHEEL_RADIUS;
+	private static double TILE_BASE = Lab4.TILE_BASE;
+	private static double TRACK = Lab4.TRACK;
+	private static double ERROR = Lab4.ERROR;
 
 //	public enum Mode {
 //		DRIVING, AVOIDING
