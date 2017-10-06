@@ -17,6 +17,7 @@ package ca.mcgill.ecse211.lab4;
  * however, only when the distance falls below d-k do you actually have a falling edge
  * 
  * 
+ * 
  * @author LiTigre
  *
  */
