@@ -52,6 +52,13 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	private static double WHEEL_RADIUS = Lab4.WHEEL_RADIUS;
 	private static double TILE_BASE = Lab4.TILE_BASE;
 	private static double TRACK = Lab4.TRACK;
+	private static int ACCELERATION = Lab4.ACCELERATION;
+
+	public enum Edge {
+		FALLING_EDGE, RISING_EDGE
+	}
+
+	private Edge edge;
 
 	private Odometer odometer;
 
@@ -59,30 +66,224 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	private EV3LargeRegulatedMotor rightMotor;
 
 	static double threshHold = 40; // d
-	static double noiseMargin = 1.5; // k
+	static double noiseMargin = 1.0; // k
 
 	// variables for the usSensor
 	private static final int FILTER_OUT = 20;
-	private int distanceUS;
+	public int distanceUS;
 	private int filterControl = 0;
 
-	// TODO: create fallingEdge()
 	// TODO: create risingEdge()
 
-	public UltrasonicLocalizer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer) {
+	public UltrasonicLocalizer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer,
+			Edge edge) {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
+		this.leftMotor.setAcceleration(ACCELERATION);
+		this.rightMotor.setAcceleration(ACCELERATION);
 
+		this.edge = edge;
 	}
 	
+	public void risingEdge() {
+		
+		
+		while (readUSDistance() < threshHold - noiseMargin) {
+			//turn counterclockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		while (readUSDistance() < threshHold - noiseMargin) {
+			//turn counterclockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		double a = odometer.getTheta();
+		System.out.println("first a: " + a);
+		
+		while (readUSDistance() < threshHold + noiseMargin ) {
+			//turn counterclockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		double b = odometer.getTheta();
+		System.out.println("first b: " + b);
+		
+		
+		double fallingA = (a+b)/2.0;
+		System.out.println("falling a: " + fallingA);
+
+		
+		rightMotor.stop(true);
+		leftMotor.stop(false);
+		
+		rightMotor.setSpeed(ROTATE_SPEED);
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.forward();
+		leftMotor.backward();
+		
+		while (readUSDistance() > threshHold - noiseMargin ) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.forward();
+			leftMotor.backward();
+		}
+		while (readUSDistance() < threshHold - noiseMargin ) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.forward();
+			leftMotor.backward();
+		}
+		a = odometer.getTheta();
+		System.out.println("second a: " + a);
+
+		while (readUSDistance() < threshHold + noiseMargin ) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.forward();
+			leftMotor.backward();
+		}
+		b = odometer.getTheta();
+		System.out.println("second b: " + b);
+		
+		rightMotor.stop(true);
+		leftMotor.stop(false);
+		
+		double fallingB = (a+b)/2.0;
+		System.out.println("falling b: " + fallingB);
+
+		double dTheta;
+		if ( fallingA<fallingB ) { 
+			dTheta = 45 - (( fallingA+fallingB )/2.0);
+		}
+		else { 
+			dTheta = 225 - (( fallingA+fallingB )/2.0);
+		} 
+		System.out.println("dtheta " + dTheta);
 	
+		double odTheta = odometer.getTheta();
+		System.out.println("odometerTheta: " + odTheta);
+
+		double theta = odTheta + dTheta;
+		System.out.println("theta: " + theta);
+
+		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
+		System.out.println("theta: " + theta);
+		
+		odometer.setTheta(Math.toRadians(theta));
+		System.out.println("odometerTheta: " + odometer.getTheta());
+		
+		turnTo(0);
+		
+		System.out.println("final angle " + odometer.getTheta());
+		
+		
+	}
 	
+
+	/**
+	 * falling edge means that it goes from open -> wall
+	 */
+	public void fallingEdge() {
+		
+		while (readUSDistance() > threshHold + noiseMargin ) {
+			//turn counterclockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.forward();
+			leftMotor.backward();
+		}
+		double a = odometer.getTheta();
+		System.out.println("first a: " + a);
+		while (readUSDistance() > threshHold - noiseMargin ) {
+			//turn counterclockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.forward();
+			leftMotor.backward();
+		}
+		double b = odometer.getTheta();
+		System.out.println("first b: " + b);
+
+		double fallingA = (a+b)/2.0;
+		System.out.println("falling a: " + fallingA);
+
+		
+		rightMotor.stop(true);
+		leftMotor.stop(false);
+		
+		
+		
+		while (readUSDistance() < threshHold + noiseMargin ) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		while (readUSDistance() > threshHold + noiseMargin ) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		a = odometer.getTheta();
+		System.out.println("second a: " + a);
+
+		while (readUSDistance() > threshHold - noiseMargin) {
+			//turn clockwise
+			rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(ROTATE_SPEED);
+			rightMotor.backward();
+			leftMotor.forward();
+		}
+		
+		b = odometer.getTheta();
+		System.out.println("second b: " + b);
+
+		rightMotor.stop(true);
+		leftMotor.stop(false);
+		
+		double fallingB = (a+b)/2.0;
+		System.out.println("falling b: " + fallingB);
+
+		double dTheta;
+		if ( fallingA<fallingB ) { 
+			dTheta = 45 - (( fallingA+fallingB )/2.0);
+		}
+		else { 
+			dTheta = 225 - (( fallingA+fallingB )/2.0);
+		} 
+		System.out.println("dtheta " + dTheta);
 	
-	
-	
-	
-	
+		double odTheta = odometer.getTheta();
+		System.out.println("odometerTheta: " + odTheta);
+
+		double theta = odTheta + dTheta;
+		System.out.println("theta: " + theta);
+
+		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
+		System.out.println("theta: " + theta);
+		
+		odometer.setTheta(Math.toRadians(theta));
+		System.out.println("odometerTheta: " + odometer.getTheta());
+		
+		turnTo(0);
+		
+		System.out.println("final angle " + odometer.getTheta());
+		
+	}
 
 	/**
 	 * given an absolute theta, turn to that angle taken from our lab3

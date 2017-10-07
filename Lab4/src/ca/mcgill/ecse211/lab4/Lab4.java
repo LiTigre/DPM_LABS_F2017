@@ -4,6 +4,7 @@ package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.lab4.Navigation;
 import ca.mcgill.ecse211.lab4.UltrasonicPoller;
+import ca.mcgill.ecse211.lab4.UltrasonicLocalizer.Edge;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -26,12 +27,14 @@ public class Lab4 {
 
 	static final double WHEEL_RADIUS = 2.15;
 	static final double TRACK = 15.55;
-
+	
 	static final int FORWARD_SPEED = 250;
-	static final int ROTATE_SPEED = 150;
-
+	static final int ROTATE_SPEED = 100;
+	
 	static final double TILE_BASE = 30.48;
 	static final double ERROR = 3;
+	
+	static final int ACCELERATION = 3000;
 
 	public static void main(String[] args) {
 
@@ -52,7 +55,10 @@ public class Lab4 {
 
 		
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
-		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
+		UltrasonicLocalizer usloca = new UltrasonicLocalizer(leftMotor, rightMotor, odometer, Edge.FALLING_EDGE);
+		usPoller = new UltrasonicPoller(usDistance, usData, usloca);
+		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t, usloca);
+		usPoller.start();
 
 		
 		do {
@@ -70,6 +76,12 @@ public class Lab4 {
 		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
 
 		if (buttonChoice == Button.ID_LEFT) {
+			odometer.start();
+			odometryDisplay.start();
+			
+			
+			usloca.fallingEdge();
+			
 			// Navigation driveUS = new Navigation(leftMotor, rightMotor, eyesMotor, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,
 			// odometer);
 			// usPoller = new UltrasonicPoller(usDistance, usData, driveUS);
@@ -93,6 +105,13 @@ public class Lab4 {
 			// driveUS.travelTo(wayPoints[Navigation.i][0], wayPoints[Navigation.i][1]);
 			// }
 
+		}
+		else{
+			odometer.start();
+			odometryDisplay.start();
+			
+			
+			usloca.risingEdge();
 		}
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
