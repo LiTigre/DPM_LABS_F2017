@@ -78,7 +78,6 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
 		this.navi = new Navigation(this.leftMotor, this.rightMotor, this.odometer);
-
 		this.edge = edge;
 	}
 	
@@ -88,6 +87,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		this.rightMotor = rightMotor;
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
+		this.navi = new Navigation(this.leftMotor, this.rightMotor, this.odometer);
+
 
 	}
 	

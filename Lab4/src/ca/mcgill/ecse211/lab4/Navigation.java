@@ -4,7 +4,7 @@ package ca.mcgill.ecse211.lab4;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.Button;
 
-public class Navigation {
+public class Navigation extends Thread {
 
 	// global variables for the code
 	private static int FORWARD_SPEED = Lab4.FORWARD_SPEED;
