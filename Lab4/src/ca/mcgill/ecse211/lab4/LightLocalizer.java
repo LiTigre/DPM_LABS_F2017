@@ -27,11 +27,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 
 public class LightLocalizer {
 	// global variables for the code
-	private static int FORWARD_SPEED = Lab4.FORWARD_SPEED;
-	private static int ROTATE_SPEED = Lab4.ROTATE_SPEED;
-	private static double WHEEL_RADIUS = Lab4.WHEEL_RADIUS;
-	private static double TILE_BASE = Lab4.TILE_BASE;
-	private static double TRACK = Lab4.TRACK;
 	private static int ACCELERATION = Lab4.ACCELERATION;
 	private static double SENSOR_DIST = Lab4.SENSOR_DIST;
 
@@ -43,6 +38,8 @@ public class LightLocalizer {
 	private EV3LargeRegulatedMotor rightMotor;
 	public EV3ColorSensor colorSensor;
 	public int colorID;
+	
+	private double[] thetas;
 
 	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
 			EV3ColorSensor colorSensor) {
@@ -51,6 +48,7 @@ public class LightLocalizer {
 		this.rightMotor = rightMotor;
 		this.colorSensor = colorSensor;
 		this.navi = new Navigation(this.leftMotor, this.rightMotor, this.odometer);
+		this.thetas = new double[4];
 		
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
@@ -60,6 +58,13 @@ public class LightLocalizer {
 	public void localize() {
 		getReady();
 		navi.turnTo(0);
+		detectLines();
+		
+		correction();
+		navi.travelTo(0, 0);
+		navi.turnTo(0);
+		
+		
 		
 	}
 	
@@ -71,13 +76,41 @@ public class LightLocalizer {
 	private void getReady() {
 		navi.turnTo(225);
 		while (colorID < 10) {
+			colorID = colorSensor.getColorID();
 			navi.backup();
 		}
+		Sound.beep();
+		navi.stopMotors();
 		navi.drive(-(SENSOR_DIST/2));
 	}
 	
+	//Counter clockwise so hits the y axis first
+	private void detectLines() {
+		navi.rotateCounterclockwise();
+		int lineCount = 0;
+		while (lineCount < 4) {
+			colorID = colorSensor.getColorID();
+			if (colorID > 10) {
+				thetas[lineCount] = odometer.getTheta();
+				Sound.beep();
+				lineCount++;
+			}
+		}
+		navi.stopMotors();
+	}
 	
-	
+	private void correction() {
+		//thetas[0] and [2] -> y axis
+		//thetas[2] and [3] -> x axis
+		double xCorrection, yCorrection;
+		double radianThetaY = ( navi.distance(thetas[0], thetas[2]) * Math.PI )/ 180;
+		double radianThetaX = ( navi.distance(thetas[1], thetas[3]) * Math.PI )/ 180;
+		xCorrection = -(SENSOR_DIST)*Math.cos(radianThetaY/2);
+		yCorrection = -(SENSOR_DIST)*Math.cos(radianThetaX/2);
+		odometer.setX(xCorrection);
+		odometer.setY(yCorrection);
+		
+	}
 	
 	
 	

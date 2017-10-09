@@ -44,6 +44,10 @@ public class Navigation extends Thread {
 		rightMotor.forward();
 		leftMotor.backward();
 	}
+	public void stopMotors() {
+		rightMotor.stop(true);
+		leftMotor.stop(false);
+	}
 	
 	// Drive is used as the base of this class and further implementations are added to it to avoid obstacles
 	/**
@@ -157,7 +161,7 @@ public class Navigation extends Thread {
 	/**
 	 * Length (angular) of a shortest way between two angles. It will be in range [0, 180]. taken from https://stackoverflow.com/questions/7570808/how-do-i-calculate-the-difference-of-two-angle-measures
 	 */
-	private double distance(double alpha, double beta) {
+	public double distance(double alpha, double beta) {
 		double phi = Math.abs(beta - alpha) % 360; // This is either the distance or 360 - distance
 		double distance = phi > 180 ? 360 - phi : phi;
 		return distance;

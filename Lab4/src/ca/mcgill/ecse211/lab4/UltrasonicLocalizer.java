@@ -46,12 +46,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class UltrasonicLocalizer implements UltrasonicController {
 
-	// global variables for the code
-	private static int FORWARD_SPEED = Lab4.FORWARD_SPEED;
-	private static int ROTATE_SPEED = Lab4.ROTATE_SPEED;
-	private static double WHEEL_RADIUS = Lab4.WHEEL_RADIUS;
-	private static double TILE_BASE = Lab4.TILE_BASE;
-	private static double TRACK = Lab4.TRACK;
 	private static int ACCELERATION = Lab4.ACCELERATION;
 
 	public enum Edge {
@@ -118,8 +112,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		System.out.println("falling a: " + fallingA);
 
 		
-		rightMotor.stop(true);
-		leftMotor.stop(false);
+		navi.stopMotors();
 		
 		
 		while (readUSDistance() > threshHold - noiseMargin ) {
@@ -139,8 +132,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		b = odometer.getTheta();
 		System.out.println("second b: " + b);
 		
-		rightMotor.stop(true);
-		leftMotor.stop(false);
+		navi.stopMotors();
 		
 		double fallingB = (a+b)/2.0;
 		System.out.println("falling b: " + fallingB);
@@ -192,8 +184,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		System.out.println("falling a: " + fallingA);
 
 		
-		rightMotor.stop(true);
-		leftMotor.stop(false);
+		navi.stopMotors();
 		
 		
 		
@@ -216,8 +207,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		b = odometer.getTheta();
 		System.out.println("second b: " + b);
 
-		rightMotor.stop(true);
-		leftMotor.stop(false);
+		navi.stopMotors();
 		
 		double fallingB = (a+b)/2.0;
 		System.out.println("falling b: " + fallingB);

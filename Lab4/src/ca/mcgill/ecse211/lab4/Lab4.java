@@ -92,6 +92,26 @@ public class Lab4 {
 			
 			usloca.risingEdge();
 		}
+		
+		do {
+			// clear the display
+			t.clear();
+
+			t.drawString("    Press the      ", 0, 0);
+			t.drawString("    escape button  ", 0, 1);
+			t.drawString(" |  to start       ", 0, 2);
+			t.drawString(" |  lightLocalizer ", 0, 3);
+			t.drawString(" V                 ", 0, 4);
+
+			buttonChoice = Button.waitForAnyPress();
+
+		} while (buttonChoice != Button.ID_ESCAPE);
+		
+		lightloca.localize();
+		
+		
+		
+		
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;
