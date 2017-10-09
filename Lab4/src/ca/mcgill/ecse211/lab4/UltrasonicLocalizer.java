@@ -61,7 +61,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	private Edge edge;
 
 	private Odometer odometer;
-
+	private Navigation navi;
+	
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
 
@@ -82,29 +83,32 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		this.rightMotor = rightMotor;
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
+		this.navi = new Navigation(this.leftMotor, this.rightMotor, this.odometer);
 
 		this.edge = edge;
+	}
+	
+	public UltrasonicLocalizer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer) {
+		this.odometer = odometer;
+		this.leftMotor = leftMotor;
+		this.rightMotor = rightMotor;
+		this.leftMotor.setAcceleration(ACCELERATION);
+		this.rightMotor.setAcceleration(ACCELERATION);
+
 	}
 	
 	public void risingEdge() {
 		
 		
 		while (readUSDistance() < threshHold - noiseMargin) {
-			//turn counterclockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
+			navi.rotateCounterclockwise();
 		}
 		double a = odometer.getTheta();
 		System.out.println("first a: " + a);
 		
 		while (readUSDistance() < threshHold + noiseMargin) {
-			//turn counterclockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
+			navi.rotateCounterclockwise();
+
 		}
 		double b = odometer.getTheta();
 		System.out.println("first b: " + b);
@@ -119,28 +123,18 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		
 		
 		while (readUSDistance() > threshHold - noiseMargin ) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.forward();
-			leftMotor.backward();
+			navi.rotateClockwise();
 		}
 		while (readUSDistance() < threshHold - noiseMargin ) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.forward();
-			leftMotor.backward();
+			navi.rotateClockwise();
+
 		}
 		a = odometer.getTheta();
 		System.out.println("second a: " + a);
 
 		while (readUSDistance() < threshHold + noiseMargin ) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.forward();
-			leftMotor.backward();
+			navi.rotateClockwise();
+
 		}
 		b = odometer.getTheta();
 		System.out.println("second b: " + b);
@@ -172,7 +166,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		odometer.setTheta((theta*Math.PI)/180);
 		System.out.println("odometerTheta: " + odometer.getTheta());
 		
-		turnTo(0);
+		navi.turnTo(0);
 		
 		System.out.println("final angle " + odometer.getTheta());
 	}
@@ -184,20 +178,12 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	public void fallingEdge() {
 		
 		while (readUSDistance() > threshHold + noiseMargin ) {
-			//turn counterclockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.forward();
-			leftMotor.backward();
+			navi.rotateCounterclockwise();
 		}
 		double a = odometer.getTheta();
 		System.out.println("first a: " + a);
 		while (readUSDistance() > threshHold - noiseMargin ) {
-			//turn counterclockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.forward();
-			leftMotor.backward();
+			navi.rotateCounterclockwise();
 		}
 		double b = odometer.getTheta();
 		System.out.println("first b: " + b);
@@ -212,28 +198,19 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		
 		
 		while (readUSDistance() < threshHold + noiseMargin ) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
+			navi.rotateClockwise();
+
 		}
 		while (readUSDistance() > threshHold + noiseMargin ) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
+			navi.rotateClockwise();
+
 		}
 		a = odometer.getTheta();
 		System.out.println("second a: " + a);
 
 		while (readUSDistance() > threshHold - noiseMargin) {
-			//turn clockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
+			navi.rotateClockwise();
+
 		}
 		
 		b = odometer.getTheta();
@@ -266,69 +243,10 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		odometer.setTheta((theta*Math.PI)/180);
 		System.out.println("odometerTheta: " + odometer.getTheta());
 		
-		turnTo(0);
+		navi.turnTo(0);
 		
 		System.out.println("final angle " + odometer.getTheta());
 		
-	}
-
-	/**
-	 * given an absolute theta, turn to that angle taken from our lab3
-	 */
-	public void turnTo(double theta) { // ABSOLUTE angle
-		double currentTheta = odometer.getTheta(); // theta of the robot in DEGREES
-		double turnTheta = distance(currentTheta, theta);
-		boolean crossover = false;
-		boolean clockwise = false;
-
-		double range = currentTheta + 180;
-		if (range > 360) {
-			range = range - 360;
-			crossover = true; // range passes over 0 degrees
-		}
-
-		if (crossover) { // crossover -> currentTheta between 180 and 360
-			if (theta > currentTheta || theta < range) { // in the 180 degrees counterclockwise
-				clockwise = true;
-			}
-		}
-		else { // currentTheta between 0 and 180
-			if (theta < range && theta > currentTheta) { // in the 180 degrees clockwise
-				clockwise = true;
-			}
-		}
-
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		if (clockwise) {
-			leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
-			rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
-		}
-		else {
-			leftMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
-			rightMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
-		}
-
-	}
-
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	private static int convertAngle(double radius, double TRACK, double angle) {
-		return convertDistance(radius, Math.PI * TRACK * angle / 360.0);
-	}
-
-	/**
-	 * Length (angular) of a shortest way between two angles. It will be in range [0, 180]. taken
-	 * from
-	 * https://stackoverflow.com/questions/7570808/how-do-i-calculate-the-difference-of-two-angle-measures
-	 */
-	private double distance(double alpha, double beta) {
-		double phi = Math.abs(beta - alpha) % 360; // This is either the distance or 360 - distance
-		double distance = phi > 180 ? 360 - phi : phi;
-		return distance;
 	}
 
 	// This method is used to be able to read the ultrasonic sensor distances

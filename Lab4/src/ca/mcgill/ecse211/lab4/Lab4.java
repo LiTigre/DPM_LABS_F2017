@@ -55,7 +55,8 @@ public class Lab4 {
 
 		
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
-		UltrasonicLocalizer usloca = new UltrasonicLocalizer(leftMotor, rightMotor, odometer, Edge.FALLING_EDGE);
+		UltrasonicLocalizer usloca = new UltrasonicLocalizer(leftMotor, rightMotor, odometer);
+		LightLocalizer lightloca = new LightLocalizer(odometer, leftMotor, rightMotor, colorSensor);
 		usPoller = new UltrasonicPoller(usDistance, usData, usloca);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t, usloca);
 		usPoller.start();
@@ -65,46 +66,22 @@ public class Lab4 {
 			// clear the display
 			t.clear();
 
-			t.drawString("<               ", 0, 0);
-			t.drawString("   please press ", 0, 1);
-			t.drawString("     left to    ", 0, 2);
-			t.drawString("     start      ", 0, 3);
-			t.drawString("                ", 0, 4);
+			t.drawString("<         |          >", 0, 0);
+			t.drawString("  press   |   press   ", 0, 1);
+			t.drawString(" left for | right for ", 0, 2);
+			t.drawString("  rising  |  falling  ", 0, 3);
+			t.drawString("   edge   |    edge   ", 0, 4);
 
 			buttonChoice = Button.waitForAnyPress();
 
 		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
 
-		if (buttonChoice == Button.ID_LEFT) {
+		if (buttonChoice == Button.ID_RIGHT) {
 			odometer.start();
 			odometryDisplay.start();
 			
 			
 			usloca.fallingEdge();
-			
-			// Navigation driveUS = new Navigation(leftMotor, rightMotor, eyesMotor, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,
-			// odometer);
-			// usPoller = new UltrasonicPoller(usDistance, usData, driveUS);
-			//
-			// // start our odometer
-			// odometer.start();
-			// OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t, driveUS);
-			//
-			// odometryDisplay.start();
-			// driveUS.start();
-			// usPoller.start();
-			//// int[][] wayPoints = { { 0, 2 }, { 1, 1 }, { 2, 2 }, { 2, 1 }, { 1, 0 } }; // path1
-			// // int[][] wayPoints = { { 1, 1 }, { 0, 2 }, { 2, 2 }, { 2, 1 }, { 1, 0 } }; //path2
-			// // int[][] wayPoints = { { 1, 0 }, { 2, 1 }, { 2, 2 }, { 0, 2 }, { 1, 1 } }; //path3
-			// // int[][] wayPoints = { { 0, 1 }, { 1, 2 }, { 1, 0 }, { 2, 1 }, { 2, 2 } }; //path4
-			//
-			// int[][] wayPoints = { { 2, 1 }, { 1, 1 }, { 1, 2 }, { 2, 0 } }; //lab report path
-			//
-			//
-			// for (Navigation.i = 0; Navigation.i < wayPoints.length; Navigation.i++) {
-			// driveUS.travelTo(wayPoints[Navigation.i][0], wayPoints[Navigation.i][1]);
-			// }
-
 		}
 		else{
 			odometer.start();
