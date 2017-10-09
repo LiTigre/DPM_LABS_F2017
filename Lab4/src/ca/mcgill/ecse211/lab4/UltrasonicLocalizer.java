@@ -96,17 +96,10 @@ public class UltrasonicLocalizer implements UltrasonicController {
 			rightMotor.backward();
 			leftMotor.forward();
 		}
-		while (readUSDistance() < threshHold - noiseMargin) {
-			//turn counterclockwise
-			rightMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.backward();
-			leftMotor.forward();
-		}
 		double a = odometer.getTheta();
 		System.out.println("first a: " + a);
 		
-		while (readUSDistance() < threshHold + noiseMargin ) {
+		while (readUSDistance() < threshHold + noiseMargin) {
 			//turn counterclockwise
 			rightMotor.setSpeed(ROTATE_SPEED);
 			leftMotor.setSpeed(ROTATE_SPEED);
@@ -124,10 +117,6 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		rightMotor.stop(true);
 		leftMotor.stop(false);
 		
-		rightMotor.setSpeed(ROTATE_SPEED);
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.forward();
-		leftMotor.backward();
 		
 		while (readUSDistance() > threshHold - noiseMargin ) {
 			//turn clockwise
@@ -186,8 +175,6 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		turnTo(0);
 		
 		System.out.println("final angle " + odometer.getTheta());
-		
-		
 	}
 	
 
