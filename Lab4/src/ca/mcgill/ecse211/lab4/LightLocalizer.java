@@ -33,9 +33,11 @@ public class LightLocalizer {
 	private static double TILE_BASE = Lab4.TILE_BASE;
 	private static double TRACK = Lab4.TRACK;
 	private static int ACCELERATION = Lab4.ACCELERATION;
+	private static double SENSOR_DIST = Lab4.SENSOR_DIST;
 
 	
 	private Odometer odometer;
+	private Navigation navi;
 
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
@@ -48,76 +50,32 @@ public class LightLocalizer {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.colorSensor = colorSensor;
+		this.navi = new Navigation(this.leftMotor, this.rightMotor, this.odometer);
+		
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
 	}
 
 	
-	
-	
-	
-	
-	
-	
+	public void localize() {
+		getReady();
+		navi.turnTo(0);
+		
+	}
 	
 	/**
-	 * given an absolute theta, turn to that angle taken from our lab3
+	 * this method will place our robot in position for the lightLocalizer
+	 * make it face the corner, and then make it back up until it detects a line
+	 * then back it up so that (0, 0) is between the sensor and the middle of the robot
 	 */
-	public void turnTo(double theta) { // ABSOLUTE angle
-		double currentTheta = odometer.getTheta(); // theta of the robot in DEGREES
-		double turnTheta = distance(currentTheta, theta);
-		boolean crossover = false;
-		boolean clockwise = false;
-
-		double range = currentTheta + 180;
-		if (range > 360) {
-			range = range - 360;
-			crossover = true; // range passes over 0 degrees
+	private void getReady() {
+		navi.turnTo(225);
+		while (colorID < 10) {
+			navi.backup();
 		}
-
-		if (crossover) { // crossover -> currentTheta between 180 and 360
-			if (theta > currentTheta || theta < range) { // in the 180 degrees counterclockwise
-				clockwise = true;
-			}
-		}
-		else { // currentTheta between 0 and 180
-			if (theta < range && theta > currentTheta) { // in the 180 degrees clockwise
-				clockwise = true;
-			}
-		}
-
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
-
-		if (clockwise) {
-			leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
-			rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
-		}
-		else {
-			leftMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, turnTheta), true);
-			rightMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, turnTheta), false);
-		}
-
+		navi.drive(-(SENSOR_DIST/2));
 	}
-
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	private static int convertAngle(double radius, double TRACK, double angle) {
-		return convertDistance(radius, Math.PI * TRACK * angle / 360.0);
-	}
-
-	/**
-	 * Length (angular) of a shortest way between two angles. It will be in range [0, 180]. taken
-	 * from
-	 * https://stackoverflow.com/questions/7570808/how-do-i-calculate-the-difference-of-two-angle-measures
-	 */
-	private double distance(double alpha, double beta) {
-		double phi = Math.abs(beta - alpha) % 360; // This is either the distance or 360 - distance
-		double distance = phi > 180 ? 360 - phi : phi;
-		return distance;
-	}
+	
 	
 	
 	

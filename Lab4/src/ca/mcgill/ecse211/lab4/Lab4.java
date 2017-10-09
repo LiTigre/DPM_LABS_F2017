@@ -27,6 +27,8 @@ public class Lab4 {
 
 	static final double WHEEL_RADIUS = 2.15;
 	static final double TRACK = 15.55;
+	static final double SENSOR_DIST = 10; 	
+	//TODO: ^^^ measure the distance between the middle of the robot and the back light sensor
 	
 	static final int FORWARD_SPEED = 250;
 	static final int ROTATE_SPEED = 100;

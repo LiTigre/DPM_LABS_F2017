@@ -57,11 +57,15 @@ public class Navigation extends Thread {
 
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
-		// Both booleans were set to true here because we want the program to continue reading the code lines
-		// when it is going from one point to another on the grid, this way we can collect the US sensor
-		// distances while driving. Otherwise, the program would be blocked by this thread until it gets to one point
 		leftMotor.rotate(convertDistance(WHEEL_RADIUS, (int) (travelDist)), true);
-		rightMotor.rotate(convertDistance(WHEEL_RADIUS, (int) (travelDist)), true);
+		rightMotor.rotate(convertDistance(WHEEL_RADIUS, (int) (travelDist)), false);
+	}
+	
+	public void backup() {
+		rightMotor.setSpeed(ROTATE_SPEED);
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.backward();
+		leftMotor.backward();
 	}
 
 	/**
