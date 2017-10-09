@@ -62,6 +62,7 @@ public class Lab4 {
 		usPoller = new UltrasonicPoller(usDistance, usData, usloca);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t, usloca);
 		usPoller.start();
+		
 
 		
 		do {
