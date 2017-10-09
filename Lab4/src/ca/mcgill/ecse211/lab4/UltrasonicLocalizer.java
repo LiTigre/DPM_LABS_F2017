@@ -169,7 +169,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
 		System.out.println("theta: " + theta);
 		
-		odometer.setTheta(Math.toRadians(theta));
+		odometer.setTheta((theta*Math.PI)/180);
 		System.out.println("odometerTheta: " + odometer.getTheta());
 		
 		turnTo(0);
@@ -263,7 +263,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
 		System.out.println("theta: " + theta);
 		
-		odometer.setTheta(Math.toRadians(theta));
+		odometer.setTheta((theta*Math.PI)/180);
 		System.out.println("odometerTheta: " + odometer.getTheta());
 		
 		turnTo(0);
