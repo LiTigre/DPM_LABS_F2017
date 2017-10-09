@@ -63,9 +63,6 @@ public class LightLocalizer {
 		correction();
 		navi.travelTo(0, 0);
 		navi.turnTo(0);
-		
-		
-		
 	}
 	
 	/**
@@ -74,14 +71,25 @@ public class LightLocalizer {
 	 * then back it up so that (0, 0) is between the sensor and the middle of the robot
 	 */
 	private void getReady() {
-		navi.turnTo(225);
 		while (colorID < 10) {
 			colorID = colorSensor.getColorID();
-			navi.backup();
+			navi.forward();
 		}
 		Sound.beep();
 		navi.stopMotors();
-		navi.drive(-(SENSOR_DIST/2));
+		navi.drive(-(SENSOR_DIST) * 1.8);
+		colorID = colorSensor.getColorID();
+
+		
+		navi.turnTo(90);
+		while (colorID < 10) {
+			colorID = colorSensor.getColorID();
+			navi.forward();
+		}
+		Sound.beep();
+		navi.stopMotors();
+		navi.drive(-(SENSOR_DIST) * 1.7);
+		
 	}
 	
 	//Counter clockwise so hits the y axis first

@@ -51,8 +51,6 @@ public class Odometer extends Thread {
 		while (true) {
 			updateStart = System.currentTimeMillis();
 
-			// TODO put (some of) your odometer code here
-
 			nowTachoL = leftMotor.getTachoCount(); // get tacho counts
 			nowTachoR = rightMotor.getTachoCount();
 			

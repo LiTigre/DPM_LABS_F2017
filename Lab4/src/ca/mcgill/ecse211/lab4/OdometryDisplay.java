@@ -61,7 +61,7 @@ public class OdometryDisplay extends Thread {
 		}
 	}
 
-	private static String formattedDoubleToString(double x, int places) {
+	public static String formattedDoubleToString(double x, int places) {
 		String result = "";
 		String stack = "";
 		long t;

@@ -71,6 +71,13 @@ public class Navigation extends Thread {
 		rightMotor.backward();
 		leftMotor.backward();
 	}
+	
+	public void forward() {
+		rightMotor.setSpeed(ROTATE_SPEED);
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.forward();
+		leftMotor.forward();
+	}
 
 	/**
 	 * This method will do most of the work. It will take as input coordinates, and convert them to actual distances (1*TILE_BASE)

@@ -27,54 +27,74 @@ public class Lab4 {
 
 	static final double WHEEL_RADIUS = 2.15;
 	static final double TRACK = 15.55;
-	static final double SENSOR_DIST = 10; 	
-	//TODO: ^^^ measure the distance between the middle of the robot and the back light sensor
-	
-	static final int FORWARD_SPEED = 250;
+	static final double SENSOR_DIST = 10;
+	// TODO: ^^^ measure the distance between the middle of the robot and the back light sensor
+
+	private static final long DISPLAY_PERIOD = 250;
+
+	static final int FORWARD_SPEED = 200;
 	static final int ROTATE_SPEED = 100;
-	
+
 	static final double TILE_BASE = 30.48;
 	static final double ERROR = 3;
-	
+
 	static final int ACCELERATION = 3000;
 
 	public static void main(String[] args) {
 
 		int buttonChoice;
 
-		
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
 		SampleProvider usDistance = usSensor.getMode("Distance");
 		float[] usData = new float[1];
 		UltrasonicPoller usPoller = null;
 
-		
 		EV3ColorSensor colorSensor = new EV3ColorSensor(lightPort);
 
-		
 		final TextLCD t = LocalEV3.get().getTextLCD();
 
-		
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
 		UltrasonicLocalizer usloca = new UltrasonicLocalizer(leftMotor, rightMotor, odometer);
 		LightLocalizer lightloca = new LightLocalizer(odometer, leftMotor, rightMotor, colorSensor);
 		usPoller = new UltrasonicPoller(usDistance, usData, usloca);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t, usloca);
 		usPoller.start();
-		
 
-		
+		long displayStart, displayEnd;
+
 		do {
-			// clear the display
-			t.clear();
 
-			t.drawString("<         |          >", 0, 0);
-			t.drawString("  press   |   press   ", 0, 1);
-			t.drawString(" left for | right for ", 0, 2);
-			t.drawString("  rising  |  falling  ", 0, 3);
-			t.drawString("   edge   |    edge   ", 0, 4);
+			while (true) {
+				displayStart = System.currentTimeMillis();
+				// clear the display
+				t.clear();
+				buttonChoice = Button.readButtons();
 
+
+				t.drawString("<       |        >", 0, 0);
+				t.drawString(" press  |  press  ", 0, 1);
+				t.drawString("  for   |   for   ", 0, 2);
+				t.drawString(" rising | falling ", 0, 3);
+				t.drawString("  edge  |   edge  ", 0, 4);
+				t.drawString(" (<39)  |  (>41)  ", 0, 5);
+				t.drawString("      " + OdometryDisplay.formattedDoubleToString(usloca.distanceUS, 3), 0, 6);
+				if(buttonChoice != 0) {
+					break;
+				}
+
+				displayEnd = System.currentTimeMillis();
+				if (displayEnd - displayStart < DISPLAY_PERIOD) {
+					try {
+						Thread.sleep(DISPLAY_PERIOD - (displayEnd - displayStart));
+					} catch (InterruptedException e) {
+						// there is nothing to be done here because it is not
+						// expected that OdometryDisplay will be interrupted
+						// by another thread
+					}
+				}
+
+			}
 			buttonChoice = Button.waitForAnyPress();
 
 		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
@@ -82,18 +102,16 @@ public class Lab4 {
 		if (buttonChoice == Button.ID_RIGHT) {
 			odometer.start();
 			odometryDisplay.start();
-			
-			
+
 			usloca.fallingEdge();
 		}
-		else{
+		else {
 			odometer.start();
 			odometryDisplay.start();
-			
-			
+
 			usloca.risingEdge();
 		}
-		
+
 		do {
 			// clear the display
 			t.clear();
@@ -107,12 +125,8 @@ public class Lab4 {
 			buttonChoice = Button.waitForAnyPress();
 
 		} while (buttonChoice != Button.ID_ESCAPE);
-		
+
 		lightloca.localize();
-		
-		
-		
-		
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 			;

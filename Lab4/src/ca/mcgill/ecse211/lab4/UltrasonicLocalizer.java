@@ -61,14 +61,12 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	private EV3LargeRegulatedMotor rightMotor;
 
 	static double threshHold = 40; // d
-	static double noiseMargin = 1.0; // k
+	static double noiseMargin = 1.2; // k
 
 	// variables for the usSensor
 	private static final int FILTER_OUT = 20;
 	public int distanceUS;
 	private int filterControl = 0;
-
-	// TODO: create risingEdge()
 
 	public UltrasonicLocalizer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer,
 			Edge edge) {
@@ -96,47 +94,47 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		
 		
 		while (readUSDistance() < threshHold - noiseMargin) {
-			navi.rotateCounterclockwise();
+			navi.rotateClockwise();
 		}
 		double a = odometer.getTheta();
-		System.out.println("first a: " + a);
+//		System.out.println("first a: " + a);
 		
 		while (readUSDistance() < threshHold + noiseMargin) {
-			navi.rotateCounterclockwise();
+			navi.rotateClockwise();
 
 		}
 		double b = odometer.getTheta();
-		System.out.println("first b: " + b);
+//		System.out.println("first b: " + b);
 		
 		
 		double fallingA = (a+b)/2.0;
-		System.out.println("falling a: " + fallingA);
+//		System.out.println("falling a: " + fallingA);
 
 		
 		navi.stopMotors();
 		
 		
 		while (readUSDistance() > threshHold - noiseMargin ) {
-			navi.rotateClockwise();
+			navi.rotateCounterclockwise();
 		}
 		while (readUSDistance() < threshHold - noiseMargin ) {
-			navi.rotateClockwise();
+			navi.rotateCounterclockwise();
 
 		}
 		a = odometer.getTheta();
-		System.out.println("second a: " + a);
+//		System.out.println("second a: " + a);
 
 		while (readUSDistance() < threshHold + noiseMargin ) {
-			navi.rotateClockwise();
+			navi.rotateCounterclockwise();
 
 		}
 		b = odometer.getTheta();
-		System.out.println("second b: " + b);
+//		System.out.println("second b: " + b);
 		
 		navi.stopMotors();
 		
 		double fallingB = (a+b)/2.0;
-		System.out.println("falling b: " + fallingB);
+//		System.out.println("falling b: " + fallingB);
 
 		double dTheta;
 		if ( fallingA<fallingB ) { 
@@ -145,23 +143,23 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		else { 
 			dTheta = 225 - (( fallingA+fallingB )/2.0);
 		} 
-		System.out.println("dtheta " + dTheta);
+//		System.out.println("dtheta " + dTheta);
 	
 		double odTheta = odometer.getTheta();
-		System.out.println("odometerTheta: " + odTheta);
+//		System.out.println("odometerTheta: " + odTheta);
 
 		double theta = odTheta + dTheta;
-		System.out.println("theta: " + theta);
+//		System.out.println("theta: " + theta);
 
-		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
-		System.out.println("theta: " + theta);
+		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100.00;
+//		System.out.println("theta: " + theta);
 		
-		odometer.setTheta((theta*Math.PI)/180);
-		System.out.println("odometerTheta: " + odometer.getTheta());
+		odometer.setTheta((theta*Math.PI)/180.0);
+//		System.out.println("odometerTheta: " + odometer.getTheta());
 		
 		navi.turnTo(0);
 		
-		System.out.println("final angle " + odometer.getTheta());
+//		System.out.println("final angle " + odometer.getTheta());
 	}
 	
 
@@ -174,15 +172,15 @@ public class UltrasonicLocalizer implements UltrasonicController {
 			navi.rotateCounterclockwise();
 		}
 		double a = odometer.getTheta();
-		System.out.println("first a: " + a);
+//		System.out.println("first a: " + a);
 		while (readUSDistance() > threshHold - noiseMargin ) {
 			navi.rotateCounterclockwise();
 		}
 		double b = odometer.getTheta();
-		System.out.println("first b: " + b);
+//		System.out.println("first b: " + b);
 
 		double fallingA = (a+b)/2.0;
-		System.out.println("falling a: " + fallingA);
+//		System.out.println("falling a: " + fallingA);
 
 		
 		navi.stopMotors();
@@ -198,7 +196,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 
 		}
 		a = odometer.getTheta();
-		System.out.println("second a: " + a);
+//		System.out.println("second a: " + a);
 
 		while (readUSDistance() > threshHold - noiseMargin) {
 			navi.rotateClockwise();
@@ -206,12 +204,12 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		}
 		
 		b = odometer.getTheta();
-		System.out.println("second b: " + b);
+//		System.out.println("second b: " + b);
 
 		navi.stopMotors();
 		
 		double fallingB = (a+b)/2.0;
-		System.out.println("falling b: " + fallingB);
+//		System.out.println("falling b: " + fallingB);
 
 		double dTheta;
 		if ( fallingA<fallingB ) { 
@@ -220,23 +218,23 @@ public class UltrasonicLocalizer implements UltrasonicController {
 		else { 
 			dTheta = 225 - (( fallingA+fallingB )/2.0);
 		} 
-		System.out.println("dtheta " + dTheta);
+//		System.out.println("dtheta " + dTheta);
 	
 		double odTheta = odometer.getTheta();
-		System.out.println("odometerTheta: " + odTheta);
+//		System.out.println("odometerTheta: " + odTheta);
 
 		double theta = odTheta + dTheta;
-		System.out.println("theta: " + theta);
+//		System.out.println("theta: " + theta);
 
-		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100;
-		System.out.println("theta: " + theta);
+		theta = (((int)(Math.abs(theta)*100)) % 36000) / 100.00;
+//		System.out.println("theta: " + theta);
 		
-		odometer.setTheta((theta*Math.PI)/180);
-		System.out.println("odometerTheta: " + odometer.getTheta());
+		odometer.setTheta((theta*Math.PI)/180.0);
+//		System.out.println("odometerTheta: " + odometer.getTheta());
 		
 		navi.turnTo(0);
 		
-		System.out.println("final angle " + odometer.getTheta());
+//		System.out.println("final angle " + odometer.getTheta());
 		
 	}
 
