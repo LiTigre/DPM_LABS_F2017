@@ -4,7 +4,6 @@ package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.lab4.Navigation;
 import ca.mcgill.ecse211.lab4.UltrasonicPoller;
-import ca.mcgill.ecse211.lab4.UltrasonicLocalizer.Edge;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -28,12 +27,11 @@ public class Lab4 {
 	static final double WHEEL_RADIUS = 2.15;
 	static final double TRACK = 15.55;
 	static final double SENSOR_DIST = 10;
-	// TODO: ^^^ measure the distance between the middle of the robot and the back light sensor
 
 	private static final long DISPLAY_PERIOD = 250;
 
 	static final int FORWARD_SPEED = 200;
-	static final int ROTATE_SPEED = 100;
+	static final int ROTATE_SPEED = 150;
 
 	static final double TILE_BASE = 30.48;
 	static final double ERROR = 3;

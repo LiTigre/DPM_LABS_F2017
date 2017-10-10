@@ -33,6 +33,12 @@ public class LightLocalizer {
 	
 	private Odometer odometer;
 	private Navigation navi;
+	
+	private double thetaYminus;
+	private double thetaXminus;
+	private double thetaCorrection1;
+	private double thetaCorrection2;
+
 
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
@@ -63,6 +69,8 @@ public class LightLocalizer {
 		correction();
 		navi.travelTo(0, 0);
 		navi.turnTo(0);
+		odometer.setTheta(Math.toRadians((thetaCorrection1 + thetaCorrection2)/2.0));
+		navi.turnTo(0);
 	}
 	
 	/**
@@ -77,7 +85,7 @@ public class LightLocalizer {
 		}
 		Sound.beep();
 		navi.stopMotors();
-		navi.drive(-(SENSOR_DIST) * 1.8);
+		navi.drive(-(SENSOR_DIST) * 1.9);
 		colorID = colorSensor.getColorID();
 
 		
@@ -88,17 +96,24 @@ public class LightLocalizer {
 		}
 		Sound.beep();
 		navi.stopMotors();
-		navi.drive(-(SENSOR_DIST) * 1.7);
+		navi.drive(-(SENSOR_DIST) * 1.9);
 		
 	}
 	
 	//Counter clockwise so hits the y axis first
 	private void detectLines() {
+//		navi.turnAround();
 		navi.rotateCounterclockwise();
 		int lineCount = 0;
 		while (lineCount < 4) {
 			colorID = colorSensor.getColorID();
 			if (colorID > 10) {
+				if (lineCount == 0){
+					thetaYminus = odometer.getTheta();
+				}
+				if (lineCount == 3) {
+					thetaXminus = odometer.getTheta();
+				}
 				thetas[lineCount] = odometer.getTheta();
 				Sound.beep();
 				lineCount++;
@@ -117,6 +132,24 @@ public class LightLocalizer {
 		yCorrection = -(SENSOR_DIST)*Math.cos(radianThetaX/2);
 		odometer.setX(xCorrection);
 		odometer.setY(yCorrection);
+		
+//		double minusX = thetaYminus - 180;
+//		double minusY = 360 - thetaXminus;
+//		
+		thetaCorrection1 = 90.0 + ((navi.distance(thetas[0], thetas[2]))/2.0) - thetaYminus + 180;
+		thetaCorrection2 = (-1)* (45.0 + ((navi.distance(thetas[1], thetas[3]))/2.0) - thetaXminus);
+
+////		double thetaCorrection2 = 90.0 + ((navi.distance(thetas[1], thetas[3]))/2.0) - (minusX);
+		System.out.println(thetaCorrection1);
+		System.out.println(thetaCorrection2);
+
+////		System.out.println(thetaCorrection2);
+//		
+//		thetaCorrectionFinal = thetaCorrection1;
+//		navi.turnTo(0);
+//		odometer.setTheta(Math.toRadians(thetaCorrection1) + odometer.getTheta());
+
+		
 		
 	}
 	

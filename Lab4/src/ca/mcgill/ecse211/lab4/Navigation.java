@@ -7,7 +7,6 @@ import lejos.hardware.Button;
 public class Navigation extends Thread {
 
 	// global variables for the code
-	private static int FORWARD_SPEED = Lab4.FORWARD_SPEED;
 	private static int ROTATE_SPEED = Lab4.ROTATE_SPEED;
 	private static double WHEEL_RADIUS = Lab4.WHEEL_RADIUS;
 	private static double TILE_BASE = Lab4.TILE_BASE;
@@ -49,6 +48,13 @@ public class Navigation extends Thread {
 		leftMotor.stop(false);
 	}
 	
+	public void turnAround() {
+		rightMotor.setSpeed(ROTATE_SPEED);
+		leftMotor.setSpeed(ROTATE_SPEED);
+		leftMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, 360), true);
+		rightMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, 360), true);
+	}
+	
 	// Drive is used as the base of this class and further implementations are added to it to avoid obstacles
 	/**
 	 * Method to make the robot drive a certain distance FORWARD(only)
@@ -59,8 +65,8 @@ public class Navigation extends Thread {
 			motor.setAcceleration(3000);
 		}
 
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed(ROTATE_SPEED);
 		leftMotor.rotate(convertDistance(WHEEL_RADIUS, (int) (travelDist)), true);
 		rightMotor.rotate(convertDistance(WHEEL_RADIUS, (int) (travelDist)), false);
 	}
