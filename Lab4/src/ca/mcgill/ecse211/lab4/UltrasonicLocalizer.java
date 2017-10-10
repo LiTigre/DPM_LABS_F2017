@@ -55,7 +55,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
 
-	static double threshHold = 40; // d
+	static double threshHold = 40.0; // d
 	static double noiseMargin = 1.2; // k
 
 	// variables for the usSensor

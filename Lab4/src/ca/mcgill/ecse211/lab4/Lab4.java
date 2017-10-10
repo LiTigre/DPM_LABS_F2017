@@ -31,7 +31,7 @@ public class Lab4 {
 	private static final long DISPLAY_PERIOD = 250;
 
 	static final int FORWARD_SPEED = 200;
-	static final int ROTATE_SPEED = 150;
+	static final int ROTATE_SPEED = 130;
 
 	static final double TILE_BASE = 30.48;
 	static final double ERROR = 3;
