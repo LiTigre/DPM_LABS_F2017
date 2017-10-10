@@ -102,7 +102,6 @@ public class LightLocalizer {
 	
 	//Counter clockwise so hits the y axis first
 	private void detectLines() {
-//		navi.turnAround();
 		navi.rotateCounterclockwise();
 		int lineCount = 0;
 		while (lineCount < 4) {
@@ -132,11 +131,9 @@ public class LightLocalizer {
 		yCorrection = -(SENSOR_DIST)*Math.cos(radianThetaX/2);
 		odometer.setX(xCorrection);
 		odometer.setY(yCorrection);
+		
 		thetaCorrection1 = 90.0 + ((navi.distance(thetas[0], thetas[2]))/2.0) - thetaYminus + 180;
 		thetaCorrection2 = (-1)*(45.0 + ((navi.distance(thetas[1], thetas[3]))/2.0) - thetaXminus);
-
-		
-		
 	}
 	
 	
